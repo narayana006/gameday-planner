@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gameday-planner"
+version = "0.1.0"
+description = "Propose failure-injection experiments for game days from a service inventory and past postmortems."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Narayana Vemburaj" }]
+dependencies = ["PyYAML>=5.4"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+gameday-planner = "gameday_planner.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
