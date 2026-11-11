@@ -1,0 +1,76 @@
+# Fictional online shop at example.com. All names are invented.
+services:
+  - name: storefront-web
+    tier: 1
+    replicas: 6
+    owner: web
+    depends_on:
+      - checkout-api
+      - catalog-api
+      - name: recommendations
+        critical: false
+
+  - name: checkout-api
+    tier: 1
+    replicas: 4
+    owner: payments
+    depends_on:
+      - orders-db
+      - name: session-cache
+        fallback: true
+      - name: payments-provider      # third party, not declared below
+      - name: order-events
+        critical: false
+
+  - name: catalog-api
+    tier: 1
+    replicas: 3
+    owner: catalog
+    depends_on:
+      - name: catalog-db
+        fallback: true              # serves from product-cache when the database is slow
+      - product-cache
+
+  - name: recommendations
+    tier: 3
+    replicas: 1
+    owner: data
+    depends_on:
+      - product-cache
+
+  - name: email-worker
+    tier: 2
+    replicas: 2
+    owner: growth
+    depends_on:
+      - order-events
+
+  - name: orders-db
+    type: database
+    tier: 1
+    replicas: 3
+    owner: payments
+
+  - name: catalog-db
+    type: database
+    tier: 2
+    replicas: 1
+    owner: catalog
+
+  - name: session-cache
+    type: cache
+    tier: 2
+    replicas: 3
+    owner: platform
+
+  - name: product-cache
+    type: cache
+    tier: 2
+    replicas: 3
+    owner: platform
+
+  - name: order-events
+    type: queue
+    tier: 2
+    replicas: 3
+    owner: platform
